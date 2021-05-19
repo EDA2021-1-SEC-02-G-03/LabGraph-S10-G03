@@ -31,6 +31,8 @@ import threading
 from App import controller
 from DISClib.ADT import stack
 assert config
+import time
+import tracemalloc
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -134,8 +136,32 @@ def thread_cycle():
 
         elif int(inputs[0]) == 4:
             msg = "Estación Base: BusStopCode-ServiceNo (Ej: 75009-10): "
+
+            delta_time = -1.0
+            delta_memory = -1.0
+
+            tracemalloc.start()
+            start_time = controller.getTime()
+            start_memory = controller.getMemory()
+            
             initialStation = input(msg)
-            optionFour(cont, initialStation)
+
+            delta_time = -1.0
+            delta_memory = -1.0
+
+            tracemalloc.start()
+            start_time = controller.getTime()
+            start_memory = controller.getMemory()
+            #======================================
+            optionFour(cont, initialStation)#'75009-10')#initialStation)
+            #======================================
+            stop_memory = controller.getMemory()
+            stop_time = controller.getTime()
+            tracemalloc.stop()
+
+            delta_time = stop_time - start_time
+            delta_memory = controller.deltaMemory(start_memory, stop_memory)
+            print('Tiempo[ms]: ', f"{delta_time:.3f}", "-", "Memoria [kB]: ", f"{delta_memory:.3f}")
 
         elif int(inputs[0]) == 5:
             destStation = input("Estación destino (Ej: 15151-10): ")
@@ -143,7 +169,25 @@ def thread_cycle():
 
         elif int(inputs[0]) == 6:
             destStation = input("Estación destino (Ej: 15151-10): ")
-            optionSix(cont, destStation)
+
+            delta_time = -1.0
+            delta_memory = -1.0
+
+            tracemalloc.start()
+            start_time = controller.getTime()
+            start_memory = controller.getMemory()
+
+            #===================================
+            optionSix(cont, destStation)#'15151-10')#destStation)
+            #==================================
+
+            stop_memory = controller.getMemory()
+            stop_time = controller.getTime()
+            tracemalloc.stop()
+
+            delta_time = stop_time - start_time
+            delta_memory = controller.deltaMemory(start_memory, stop_memory)
+            print('Tiempo[ms]: ', f"{delta_time:.3f}", "-", "Memoria [kB]: ", f"{delta_memory:.3f}")
 
         elif int(inputs[0]) == 7:
             optionSeven(cont)
